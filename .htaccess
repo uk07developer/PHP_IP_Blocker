@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Check IP blocking before any file access
+    RewriteCond %{REQUEST_URI} !^/blocked_ips.php
+    RewriteRule ^ - [E=BLOCKED_IP:false]
+    RewriteCond %{HTTP_HOST} ^(.*)$
+    RewriteCond %{ENV:BLOCKED_IP} ^false$
+    RewriteRule ^(.*)$ blocked_ips.php [L]
+
+    # Block access to all files if IP is blocked
+    RewriteCond %{ENV:BLOCKED_IP} ^true$
+    RewriteRule ^ - [F]
+</IfModule>
